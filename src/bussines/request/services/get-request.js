@@ -1,4 +1,4 @@
-const { getItems } = require("../repository/get-Request-repository");
+const { getItems } = require("../repository/get-request-repository");
 
 const getRequest = async (req, res) => {
   try {
