@@ -10,7 +10,7 @@ const app = express();
 
 // Middlewares básicos
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:4200',
+  origin: process.env.FRONTEND_URL || 'https://front-ing-git-main-andres-ortizs-projects-ce0897f6.vercel.app',
   credentials: true
 }));
 
