@@ -1,0 +1,51 @@
+{
+  "name": "konectabackend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "coverage": "jest --detectOpenHandles --forceExit --coverage",
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "migration:generate": "typeorm-ts-node-commonjs migration:generate -d ./src/config/data-source.js",
+    "migration:run": "typeorm-ts-node-commonjs migration:run -d ./src/config/data-source.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^9.0.2",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "joi": "^17.13.3",
+    "mysql2": "^3.6.0",
+    "pg": "^8.16.3",
+    "reflect-metadata": "^0.2.2",
+    "sequelize": "^6.37.7",
+    "sweetalert2": "^11.26.2",
+    "typeorm": "^0.3.25"
+  },
+  "devDependencies": {
+    "jest": "^30.0.5",
+    "nodemon": "^3.1.10",
+    "sequelize-cli": "^6.6.3",
+    "supertest": "^7.1.4",
+    "ts-node": "^10.9.2"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/bussines/**/*.js"
+    ],
+    "coverageDirectory": "coverage",
+    "coverageReporters": [
+      "text",
+      "lcov"
+    ]
+  }
+}
