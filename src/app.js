@@ -30,7 +30,7 @@ app.use(rateLimitHandler({
 
 // CORS (Cross-Origin Resource Sharing)
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'https://front-ing-git-main-andres-ortizs-projects-ce0897f6.vercel.app',
+  origin: process.env.FRONTEND_URL || 'http://localhost:4200',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
