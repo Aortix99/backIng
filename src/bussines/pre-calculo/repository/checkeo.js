@@ -20,10 +20,8 @@ const checkN1 = (Tt, Fc, A, L) => {
  * @param {number} PvIn - Carga puntual interna
  * @returns {Array<number>} Array con los 5 puntos críticos del diagrama
  */
-const grafiConstante = (R, L, D1, D2, PveX, PvIn) => {
-  console.log('grafica', R, L, D1, D2, PveX, PvIn);
+const grafiConstante = (L, D1, D2, PveX, PvIn, W) => {
   const D3 = D1 + D2 - L;
-  const W = R / L;
   const puntoInicial = D1 * W;
   const puntoDespuesCargaExterna = puntoInicial - PveX;
   const puntoIntermedio = W * D2 + puntoDespuesCargaExterna;
@@ -31,10 +29,10 @@ const grafiConstante = (R, L, D1, D2, PveX, PvIn) => {
   const puntoFinal = - puntoDespuesCargaInterna + D3 * W;
   const D = [0, D1, D1, D2, D2, L]
   const V = [0,
-    parseFloat(puntoInicial.toFixed(4)),
-    parseFloat(puntoDespuesCargaExterna.toFixed(4)),
-    parseFloat(puntoIntermedio.toFixed(4)),
-    parseFloat(puntoDespuesCargaInterna.toFixed(4)),
+    puntoInicial,
+    puntoDespuesCargaExterna,
+    puntoIntermedio,
+    puntoDespuesCargaInterna,
     puntoFinal
   ]
   return { D, V };

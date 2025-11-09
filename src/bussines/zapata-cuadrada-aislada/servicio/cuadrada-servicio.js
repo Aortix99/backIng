@@ -73,7 +73,7 @@ const zapataCuadradaCombinadaService = (req, res) => {
     if (!validate4.validate) {
         return res.status(200).json({
             error: true,
-            message: 'Error: No cumple con los requisistos de 12.2., aumentar Hz',
+            message: 'Error: No cumple con los requisistos, aumentar Hz',
             details: 'no cumple con el cuarto punto.'
         });
     }
