@@ -1,7 +1,7 @@
 const { listaAreaAcero } = require("../../constantes");
 const { grafiConstante } = require("../../pre-calculo/repository/checkeo");
-const { forceApplay, areaRequired, cargasOfColumns, DistanceOfLader,
-    longZapata, redondearA05, quiuMiu, forceApplicaExt, forceApplicaInt,
+const { areaRequired, cargasOfColumns, DistanceOfLader,
+    longZapata, quiuMiu, forceApplicaExt, forceApplicaInt,
     force,
     fnAIzq,
     checkPedestalCombinadas,
@@ -59,7 +59,7 @@ const zapataCombinadaService = (req, res) => {
         X1 = parseFloat(X1.toFixed(4));
         let X2 = Lz - X1;
         X2 = parseFloat(X2.toFixed(4));
-        
+
         const I = Math.abs((E + Lz) - L);
         validate = checkPedestalCombinadas(PuExt, Fc, CxExt, CyExt, L);
         if (!validate) {
@@ -70,12 +70,12 @@ const zapataCombinadaService = (req, res) => {
             });
         }
         const responseGrafica = grafiConstante(L, E, Lz, PuExt, PuInt, W);
-        
+
         const Xa = Math.abs(parseFloat(responseGrafica.V[2] / W).toFixed(4));
         const Xa2 = Math.abs(parseFloat(Xa - Lz).toFixed(4));
 
         const dataNormal = responseGraficaMomento([E, Xa, Xa2, I], [responseGrafica.V[1], responseGrafica.V[2], responseGrafica.V[3], responseGrafica.V[4]]);
-        
+
         const C = Math.max(...responseGrafica.V.map(Math.abs));
         let Bo;
         const B1 = (CyExt / 2 + ((PdInt + PlInt) * Lz) / (PdExt + PlExt + PdInt + PlInt));
@@ -135,7 +135,28 @@ const zapataCombinadaService = (req, res) => {
             }
         }
 
-        res.status(200).json({ response: { A, Xc_gExt, B, L, Qu, PuExt, PuInt, R, W, E, X1, X2, I, Bo, P }, responseGrafica });
+        res.status(200).json({
+            response: {
+                PuMaxExt,
+                PuMaxInt,
+                PuExt,
+                PuInt,
+                A,
+                Xc_gExt,
+                B,
+                L,
+                Qu,
+                R,
+                W,
+                E,
+                X1,
+                X2,
+                I,
+                Bo,
+                P
+            },
+            responseGrafica
+        });
 
     } catch (error) {
         res.status(500).json({ message: 'No se pudo calcular la zapata combinada', error: error && error.message ? String(error.message) : undefined });
