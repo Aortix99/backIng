@@ -140,14 +140,16 @@ const forceVu2 = (PuInt, CyInt, Hz, Qu) => {
 };
 const forceVu3 = (PuExt, CyExt, CxExt, Qu, Hz) => {
     const d = Hz - 0.09;
-    const Vu3 = ((PuExt) - ((CyExt + (d) ** 2) * (CxExt + d)));
+    const Vu3 = ((PuExt) - ((CyExt + d) * (CxExt + d/2)) * Qu);
+    console.log('Vu3', Vu3);
     return Vu3;
 };
 const validate_4_2 = (Vu2, Fc, CyInt, Hz, Va, CxExt) => {
     let validate = false;
-    let variable = Va ? (4 * (CyInt * 39.37 + (Hz - 0.09) * 39.37)) : (((CyInt + (Hz - 0.09) ** 2) * (CxExt + (Hz - 0.09))) * 39.37) * 2;
+    let variable = Va ? (4 * (CyInt * 39.37 + (Hz - 0.09) * 39.37)) : (((CyInt + (Hz - 0.09)) * (CxExt + (Hz - 0.09)/2)) * 39.37) * 2;
     const d = (Vu2 * 2204.62) / (0.75 * 4 * Math.sqrt(Fc * 14.223) * variable);
     validate = d * pulgadasMetro < Hz - 0.09;
+    console.log('d', d * pulgadasMetro, 'Hz', Hz - 0.09, 'validate', validate, d);
     return { d: (d * pulgadasMetro).toFixed(6), Hz: (Hz - 0.09).toFixed(2), validate };
 }
 module.exports = {
