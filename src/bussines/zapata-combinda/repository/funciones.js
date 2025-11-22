@@ -61,13 +61,12 @@ const fnAIzq = (PuExt, PuInt, Lz, L) => {
 };
 
 const n1 = 0.85;
-const n2 = 0.65;
+const n2 = 0.75;
 
 const checkPedestalCombinadas = (Pu, Fc, Cx, Cy, L) => {
-    const conversion = ((Fc) * (1 / 145.038)) / 100;
-    const calculo = n1 * n2 * conversion * ((Cx * 100) * (Cy * 100)) * L;
-    const validate = (Pu) * (1 / 9.81) <= calculo;
-    return { Pu: (Pu) * (1 / 9.81), calculo, validate };
+    const calculo = (n1 * n2 * Fc * ((Cx * 100) * (Cy * 100))) / 1000;
+    const validate = Pu <= calculo;
+    return { Pu, calculo, validate };
 };
 const checkPedestal = (Pu, Fc, Cx, Cy) => {
     const conversion = ((Fc) * (1 / 145.038)) / 100;

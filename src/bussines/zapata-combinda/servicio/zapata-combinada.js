@@ -22,7 +22,8 @@ const { areaRequired, cargasOfColumns, DistanceOfLader,
 const zapataCombinadaService = (req, res) => {
     const { Fc, Fy, Wc, Qa, Ds, Hz, C, Lz, PdExt, PlExt, CxExt, CyExt, PdInt, PlInt, CxInt, CyInt } = req.body.model;
 
-    let validate = false;
+    let validateExt;
+    let validateInt;
     try {
 
         const PuMaxExt = FuerzaPuMax(Fc, CxExt, CyExt);
@@ -61,12 +62,18 @@ const zapataCombinadaService = (req, res) => {
         X2 = parseFloat(X2.toFixed(4));
 
         const I = Math.abs((E + Lz) - L);
-        validate = checkPedestalCombinadas(PuExt, Fc, CxExt, CyExt, L);
-        if (!validate) {
+        validateExt = checkPedestalCombinadas(PuExt, Fc, CxExt, CyExt);
+        if (!validateExt.validate) {
             return res.status(200).json({
                 error: true,
-                message: 'Error: los parametros del pedestal no cumplen.',
-                details: `Error en la columna ${i + 1}`
+                message: 'Error: los parametros del pedestal externo no cumplen.',
+            });
+        }
+        validateInt = checkPedestalCombinadas(PuInt, Fc, CxInt, CyInt);
+        if (!validateInt.validate) {
+            return res.status(200).json({
+                error: true,
+                message: 'Error: los parametros del pedestal interno no cumplen.',
             });
         }
         const responseGrafica = grafiConstante(L, E, Lz, PuExt, PuInt, W);
@@ -74,7 +81,7 @@ const zapataCombinadaService = (req, res) => {
         const Xa = Math.abs(parseFloat(responseGrafica.V[2] / W).toFixed(4));
         const Xa2 = Math.abs(parseFloat(Xa - Lz).toFixed(4));
 
-        const dataNormal = responseGraficaMomento([E, Xa, Xa2, I], [responseGrafica.V[1], responseGrafica.V[2], responseGrafica.V[3], responseGrafica.V[4]]);
+        const dataNormal = ([E, Xa, Xa2, I], [responseGrafica.V[1], responseGrafica.V[2], responseGrafica.V[3], responseGrafica.V[4]]);
 
         const C = Math.max(...responseGrafica.V.map(Math.abs));
         let Bo;
@@ -153,7 +160,9 @@ const zapataCombinadaService = (req, res) => {
                 X2,
                 I,
                 Bo,
-                P
+                P,
+                validateExt,
+                validateInt
             },
             responseGrafica
         });
