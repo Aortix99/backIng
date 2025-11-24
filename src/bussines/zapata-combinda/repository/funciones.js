@@ -106,17 +106,18 @@ const Vultimo = (Cu, W, Hz, Fc) => {
 const calculoAceroDoble = (Fc, Fy, B, Hz, Mu) => {
     const MuAbs = Mu.map(Math.abs);
     let response = [];
-    for (let i = 1; i < MuAbs.length; i++) {
+    for (let i = 0; i < MuAbs.length; i++) {
+        console.log('Calculating As for Mu index:', i);
         const d = Hz - 0.09;
         const A = ((Fc * 0.098) / (2 * 0.59 * (Fy * 0.098))) ** 2;
-        const Ab = ((MuAbs[i] * 0.0098) * (Fc * 0.098)) / ((B / 100) * (d) ** 2 * phi2 * estable * (Fy * 0.098) ** 2);
-        const raiz = A - Ab;
+        const Ab = ((MuAbs[i] * 0.0098) * (Fc * 0.098)) / ((B) * (d) ** 2 * phi2 * estable * (Fy * 0.098) ** 2);
+        const raiz = Math.abs(A - Ab);
         const asi = (Fc * 0.098 / (2 * estable * (Fy * 0.098)));
         let As = asi - Math.sqrt(raiz);
         if (As < 0.0033) As = 0.0033;
         response.push(As);
     }
-    return response;
+    return {P: response, MuAbs};
 };
 
 const peralteRequeridoEnUnaDireccion = (C, W, Hz) => {
@@ -140,15 +141,13 @@ const forceVu2 = (PuInt, CyInt, Hz, Qu) => {
 const forceVu3 = (PuExt, CyExt, CxExt, Qu, Hz) => {
     const d = Hz - 0.09;
     const Vu3 = ((PuExt) - ((CyExt + d) * (CxExt + d/2)) * Qu);
-    console.log('Vu3', Vu3);
-    return Vu3;
+    return parseFloat((Vu3).toFixed(10));
 };
 const validate_4_2 = (Vu2, Fc, CyInt, Hz, Va, CxExt) => {
     let validate = false;
     let variable = Va ? (4 * (CyInt * 39.37 + (Hz - 0.09) * 39.37)) : (((CyInt + (Hz - 0.09)) * (CxExt + (Hz - 0.09)/2)) * 39.37) * 2;
     const d = (Vu2 * 2204.62) / (0.75 * 4 * Math.sqrt(Fc * 14.223) * variable);
     validate = d * pulgadasMetro < Hz - 0.09;
-    console.log('d', d * pulgadasMetro, 'Hz', Hz - 0.09, 'validate', validate, d);
     return { d: (d * pulgadasMetro).toFixed(6), Hz: (Hz - 0.09).toFixed(2), validate };
 }
 module.exports = {

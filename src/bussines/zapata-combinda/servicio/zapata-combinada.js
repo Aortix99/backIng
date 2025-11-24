@@ -87,6 +87,7 @@ const zapataCombinadaService = (req, res) => {
         let Bo;
         const B1 = (CyExt / 2 + ((PdInt + PlInt) * Lz) / (PdExt + PlExt + PdInt + PlInt));
         Bo = redondearA5(B1);
+       
         const Vu1 = peralteRequeridoEnUnaDireccion(C, W, Hz);
         const Validate1 = validate_4_1(Vu1, Fc, Bo, Hz);
         if (!Validate1.validate) {
@@ -118,30 +119,30 @@ const zapataCombinadaService = (req, res) => {
             });
         }
 
-        let P = calculoAceroDoble(Fc, Fy, Bo, Hz, dataNormal);
-        P.push(0.0033);
+        let response = calculoAceroDoble(Fc, Fy, Bo, Hz, dataNormal);
+        response.P.push(0.0033);
+        console.log('response.P', response);
+        console.log('##');
         let As = [];
         let separacionA = [];
-        for (let i = 0; i < P.length; i++) {
-            const pValue = P[i] * Bo * (Hz - 0.09) * 100;
+        for (let i = 0; i < response.P.length; i++) {
+            const pValue = response.P[i] * Bo * 100 * (Hz - 0.09) * 100;
             As.push(`P${i + 1}`, pValue);
+            console.log(`P${i + 1}`);
             for (let j = 0; j <= listaAreaAcero.length; j++) {
                 const area = listaAreaAcero[j].area;
+                const Az = listaAreaAcero[j].Az;
                 const AsValue = Math.ceil(pValue / area);
                 const AsKey = L * 100 - 7.5 * 2;
-                const separacion = AsKey / (AsValue - 1);
-
-                // Si la validación se cumple, probamos con el siguiente acero (repetimos el for interno)
-                if (separacion < 10 || AsValue > 30) {
-                    continue; // intenta con la siguiente barra en listaAreaAcero
+                let separacion = AsKey / (AsValue - 1);
+                if (separacion <= 10 || AsValue >= 30) {
+                    continue;
                 }
-
-                // Si la validación NO se cumple, aceptamos este resultado y salimos del for interno
-                separacionA.push(separacion);
+                console.log(`Separacion: ${separacion}`);
+                separacionA.push({separacion, Az});
                 break;
             }
         }
-
         res.status(200).json({
             response: {
                 PuMaxExt,
@@ -151,6 +152,7 @@ const zapataCombinadaService = (req, res) => {
                 A,
                 Xc_gExt,
                 B,
+                C,
                 L,
                 Qu,
                 R,
@@ -160,9 +162,17 @@ const zapataCombinadaService = (req, res) => {
                 X2,
                 I,
                 Bo,
-                P,
+                Vu1,
+                Vu2,
+                Vu3,
                 validateExt,
-                validateInt
+                validateInt,
+                Validate1,
+                Validate2,
+                Validate3,
+                As,
+                separacionA,
+                response
             },
             responseGrafica
         });
