@@ -22,7 +22,7 @@ class AuthService {
   async login(email, password) {
     try {
       // CREDENCIALES QUEMADAS PARA TESTING
-      const HARDCODED_EMAIL = 'acocogollogmail.com';
+      const HARDCODED_EMAIL = 'acocogollo@gmail.com';
       const HARDCODED_PASSWORD = '1003435599A@a';
 
       // Verificar con credenciales quemadas
