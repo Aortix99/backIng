@@ -21,36 +21,63 @@ class AuthService {
    */
   async login(email, password) {
     try {
-      // Buscar usuario por email
-      const user = await this.userRepository.findByEmail(email);
-      
-      if (!user) {
-        throw new Error('Credenciales incorrectas');
+      // CREDENCIALES QUEMADAS PARA TESTING
+      const HARDCODED_EMAIL = 'acocogollogmail.com';
+      const HARDCODED_PASSWORD = '1003435599A@a';
+
+      // Verificar con credenciales quemadas
+      if (email === HARDCODED_EMAIL && password === HARDCODED_PASSWORD) {
+        const token = this.tokenService.generateToken({
+          id: 1,
+          email: HARDCODED_EMAIL,
+          name: 'Usuario de Prueba',
+          role: 'admin'
+        });
+
+        return {
+          user: {
+            id: 1,
+            email: HARDCODED_EMAIL,
+            name: 'Usuario de Prueba',
+            role: 'admin'
+          },
+          token,
+          message: 'Login exitoso (credenciales de prueba)'
+        };
       }
 
-      // Verificar contraseña
-      const isPasswordValid = await this.passwordService.compare(password, user.password);
+      // COMENTADO: Buscar usuario por email en BD
+      // const user = await this.userRepository.findByEmail(email);
       
-      if (!isPasswordValid) {
-        throw new Error('Credenciales incorrectas');
-      }
+      // if (!user) {
+      //   throw new Error('Credenciales incorrectas');
+      // }
 
-      // Generar token JWT
-      const token = this.tokenService.generateToken({
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: user.role
-      });
+      // COMENTADO: Verificar contraseña en BD
+      // const isPasswordValid = await this.passwordService.compare(password, user.password);
+      
+      // if (!isPasswordValid) {
+      //   throw new Error('Credenciales incorrectas');
+      // }
 
-      // Retornar usuario sin contraseña y token
-      const { password: _, ...userWithoutPassword } = user.toJSON();
+      // COMENTADO: Generar token JWT
+      // const token = this.tokenService.generateToken({
+      //   id: user.id,
+      //   email: user.email,
+      //   name: user.name,
+      //   role: user.role
+      // });
 
-      return {
-        user: userWithoutPassword,
-        token,
-        message: 'Login exitoso'
-      };
+      // COMENTADO: Retornar usuario sin contraseña y token
+      // const { password: _, ...userWithoutPassword } = user.toJSON();
+
+      // return {
+      //   user: userWithoutPassword,
+      //   token,
+      //   message: 'Login exitoso'
+      // };
+      
+      throw new Error('Credenciales incorrectas');
       
     } catch (error) {
       throw error;
