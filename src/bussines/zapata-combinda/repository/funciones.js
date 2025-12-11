@@ -88,7 +88,6 @@ const responseGraficaMomento = (x, y) => {
         suma += area;
         areas.push(area);
     }
-
     return areas;
 };
 
@@ -104,10 +103,15 @@ const Vultimo = (Cu, W, Hz, Fc) => {
 };
 
 const calculoAceroDoble = (Fc, Fy, B, Hz, Mu) => {
-    const MuAbs = Mu.map(Math.abs);
+    const P1 = Mu[0];
+    const P2 = Mu[0] + Mu[1];
+    const P3 = Mu[0] + Mu[1] + Mu[2];
+    const P4 = Mu[0] + Mu[1] + Mu[2] + Mu[3];
+    const newAarray = [P1, P2, P3, P4];
+    const MuAbsEXp = newAarray;
+    const MuAbs = newAarray.map((m) => Math.abs(m));
     let response = [];
     for (let i = 0; i < MuAbs.length; i++) {
-        console.log('Calculating As for Mu index:', i);
         const d = Hz - 0.09;
         const A = ((Fc * 0.098) / (2 * 0.59 * (Fy * 0.098))) ** 2;
         const Ab = ((MuAbs[i] * 0.0098) * (Fc * 0.098)) / ((B) * (d) ** 2 * phi2 * estable * (Fy * 0.098) ** 2);
@@ -117,7 +121,7 @@ const calculoAceroDoble = (Fc, Fy, B, Hz, Mu) => {
         if (As < 0.0033) As = 0.0033;
         response.push(As);
     }
-    return {P: response, MuAbs};
+    return {P: response, MuAbs, MuAbsEXp};
 };
 
 const peralteRequeridoEnUnaDireccion = (C, W, Hz) => {

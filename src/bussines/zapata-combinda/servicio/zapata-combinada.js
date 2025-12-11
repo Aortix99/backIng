@@ -81,13 +81,15 @@ const zapataCombinadaService = (req, res) => {
         const Xa = Math.abs(parseFloat(responseGrafica.V[2] / W).toFixed(4));
         const Xa2 = Math.abs(parseFloat(Xa - Lz).toFixed(4));
 
-        const dataNormal = ([E, Xa, Xa2, I], [responseGrafica.V[1], responseGrafica.V[2], responseGrafica.V[3], responseGrafica.V[4]]);
-
+        // const dataNormal = ([E, Xa, Xa2, I], [responseGrafica.V[1], responseGrafica.V[2], responseGrafica.V[3], responseGrafica.V[4]]);
+        const MomentoG = responseGraficaMomento([E, Xa, Xa2, I], [responseGrafica.V[1], responseGrafica.V[2], responseGrafica.V[3], responseGrafica.V[4]]);
         const C = Math.max(...responseGrafica.V.map(Math.abs));
+        // este se usa para la separacion de acero princpapal inferior 
         let Bo;
         const B1 = (CyExt / 2 + ((PdInt + PlInt) * Lz) / (PdExt + PlExt + PdInt + PlInt));
         Bo = redondearA5(B1);
-       
+        // acero principal superior
+        const Bo1 = (((C * 1000) - (W * 10) * (20 + (Hz * 100 - 0.09 * 100))) / (0.53 * 0.75 * Math.sqrt(Fc) * (Hz * 100 - 0.09 * 100)))/100;
         const Vu1 = peralteRequeridoEnUnaDireccion(C, W, Hz);
         const Validate1 = validate_4_1(Vu1, Fc, Bo, Hz);
         if (!Validate1.validate) {
@@ -119,30 +121,14 @@ const zapataCombinadaService = (req, res) => {
             });
         }
 
-        let response = calculoAceroDoble(Fc, Fy, Bo, Hz, dataNormal);
-        response.P.push(0.0033);
-        console.log('response.P', response);
-        console.log('##');
-        let As = [];
-        let separacionA = [];
-        for (let i = 0; i < response.P.length; i++) {
-            const pValue = response.P[i] * Bo * 100 * (Hz - 0.09) * 100;
-            As.push(`P${i + 1}`, pValue);
-            console.log(`P${i + 1}`);
-            for (let j = 0; j <= listaAreaAcero.length; j++) {
-                const area = listaAreaAcero[j].area;
-                const Az = listaAreaAcero[j].Az;
-                const AsValue = Math.ceil(pValue / area);
-                const AsKey = L * 100 - 7.5 * 2;
-                let separacion = AsKey / (AsValue - 1);
-                if (separacion <= 10 || AsValue >= 30) {
-                    continue;
-                }
-                console.log(`Separacion: ${separacion}`);
-                separacionA.push({separacion, Az});
-                break;
-            }
-        }
+        let response1 = calculoAceroDoble(Fc, Fy, Bo1, Hz, MomentoG);
+        const response5 = calculateAcero(response1, Bo1, Hz, listaAreaAcero, L);
+        const graficaMomento = {y: [0, ...response1.MuAbsEXp], x: [0, E, Xa, Lz, L]};
+        console.log('aqui deberia ser ', graficaMomento);
+        // pendiente checkeo.
+        // const armaduraTransversalExt = calculoDeLaArmaduraTransversal(PuExt, (Hz- 0.09), CxExt, Bo1, true);
+        // const armaduraTransversalInt = calculoDeLaArmaduraTransversal(PuInt, (Hz- 0.09), CyInt, Bo1, false);
+        // console.log('armaduraTransversalExt', armaduraTransversalExt, 'armaduraTransversalInt', armaduraTransversalInt);
         res.status(200).json({
             response: {
                 PuMaxExt,
@@ -170,9 +156,10 @@ const zapataCombinadaService = (req, res) => {
                 Validate1,
                 Validate2,
                 Validate3,
-                As,
-                separacionA,
-                response
+                As1: response5.As,
+                separacionA1: response5.separacionA,
+                response1,
+                graficaMomento
             },
             responseGrafica
         });
@@ -185,3 +172,31 @@ const zapataCombinadaService = (req, res) => {
 module.exports = {
     zapataCombinadaService
 }
+
+const calculateAcero = (response, Bo, Hz, listaAreaAcero, L) => {
+    let As = [];
+    let separacionA = [];
+    for (let i = 0; i < response.P.length; i++) {
+        const pValue = response.P[i] * Bo * 100 * (Hz * 100 - 0.09 * 100) ;
+        As.push(`P${i + 1}`, pValue);
+        for (let j = 0; j <= listaAreaAcero.length; j++) {
+            const area = listaAreaAcero[j].area;
+            const Az = listaAreaAcero[j].Az;
+            const AsValue = Math.ceil(pValue / area);
+            const AsKey = L * 100 - 7.5 * 2;
+            let separacion = AsKey / (AsValue - 1);
+            if (separacion <= 10 || AsValue >= 30) {
+                continue;
+            }
+            separacionA.push({ separacion, Az });
+            break;
+        }
+    }
+    return { As, separacionA };
+}
+
+const calculoDeLaArmaduraTransversal = (Pu, d, Cx, Bo1, bool) => {
+    const Wu = Pu / (Cx + d * (bool ? 1 : 2));
+    const Mu = Pu * (((Bo1 - Cx) / 2) ** 2) / 2;
+    return { Wu, Mu};
+};
