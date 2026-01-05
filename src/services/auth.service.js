@@ -46,38 +46,36 @@ class AuthService {
         };
       }
 
-      // COMENTADO: Buscar usuario por email en BD
-      // const user = await this.userRepository.findByEmail(email);
+      // Buscar usuario por email en BD
+      const user = await this.userRepository.findByEmail(email);
       
-      // if (!user) {
-      //   throw new Error('Credenciales incorrectas');
-      // }
+      if (!user) {
+        throw new Error('Credenciales incorrectas');
+      }
 
-      // COMENTADO: Verificar contraseña en BD
-      // const isPasswordValid = await this.passwordService.compare(password, user.password);
+      // Verificar contraseña en BD
+      const isPasswordValid = await this.passwordService.compare(password, user.password);
       
-      // if (!isPasswordValid) {
-      //   throw new Error('Credenciales incorrectas');
-      // }
+      if (!isPasswordValid) {
+        throw new Error('Credenciales incorrectas');
+      }
 
-      // COMENTADO: Generar token JWT
-      // const token = this.tokenService.generateToken({
-      //   id: user.id,
-      //   email: user.email,
-      //   name: user.name,
-      //   role: user.role
-      // });
+      // Generar token JWT
+      const token = this.tokenService.generateToken({
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role
+      });
 
-      // COMENTADO: Retornar usuario sin contraseña y token
-      // const { password: _, ...userWithoutPassword } = user.toJSON();
+      // Retornar usuario sin contraseña y token
+      const { password: _, ...userWithoutPassword } = user.toJSON();
 
-      // return {
-      //   user: userWithoutPassword,
-      //   token,
-      //   message: 'Login exitoso'
-      // };
-      
-      throw new Error('Credenciales incorrectas');
+      return {
+        user: userWithoutPassword,
+        token,
+        message: 'Login exitoso'
+      };
       
     } catch (error) {
       throw error;
