@@ -124,11 +124,9 @@ const zapataCombinadaService = (req, res) => {
         let response1 = calculoAceroDoble(Fc, Fy, Bo1, Hz, MomentoG);
         const response5 = calculateAcero(response1, Bo1, Hz, listaAreaAcero, L);
         const graficaMomento = {y: [0, ...response1.MuAbsEXp], x: [0, E, Xa, Lz, L]};
-        console.log('aqui deberia ser ', graficaMomento);
         // pendiente checkeo.
         // const armaduraTransversalExt = calculoDeLaArmaduraTransversal(PuExt, (Hz- 0.09), CxExt, Bo1, true);
         // const armaduraTransversalInt = calculoDeLaArmaduraTransversal(PuInt, (Hz- 0.09), CyInt, Bo1, false);
-        // console.log('armaduraTransversalExt', armaduraTransversalExt, 'armaduraTransversalInt', armaduraTransversalInt);
         res.status(200).json({
             response: {
                 PuMaxExt,
@@ -190,7 +188,7 @@ const calculateAcero = (response, Bo, Hz, listaAreaAcero, L) => {
             }
             separacionA.push({ separacion, Az });
             break;
-        }
+        }   
     }
     return { As, separacionA };
 }

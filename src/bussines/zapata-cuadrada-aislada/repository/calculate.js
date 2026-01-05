@@ -51,9 +51,14 @@ const validate_4 = (Vu1, Fc, L, Hz) => {
     validate = d * pulgadasMetro < Hz - 0.09;
     return { d: (d * pulgadasMetro).toFixed(2), Hz: (Hz - 0.09).toFixed(2), validate };
 };
-const calculoAcero = (Fc, Fy, B, Hz, e, L, Qu) => {
+const calculoAcero = (Fc, Fy, B, Hz, e, L, Qu, MuV = 0, validate = false) => {
+    let Mu = 0;
     const d = Hz - 0.09;
-    const Mu = (e + d) * L * Qu * ((e + d) / 2);
+    if (validate) {
+        Mu = MuV;
+    } else {
+        Mu = (e + d) * L * Qu * ((e + d) / 2);
+    }
     const A = ((Fc * psi) / (2 * estable * (Fy * psi))) ** 2;
     const Ab = ((Mu * 0.001) * (Fc * psi)) / (B * (d) ** 2 * phi2 * estable * (Fy * psi) ** 2);
     const raiz = A - Ab;

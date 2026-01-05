@@ -21,6 +21,7 @@ const { insertUser } = require('../bussines/login/servicie/insert-empolye.js');
 const { loginUser } = require('../bussines/login/servicie/searh-user.js');
 const { zapataCombinadaService } = require('../bussines/zapata-combinda/servicio/zapata-combinada.js');
 const { zapataCuadradaCombinadaService } = require('../bussines/zapata-cuadrada-aislada/servicio/cuadrada-servicio.js');
+const { zapata_excentrica_viga_amarre_servicio } = require('../bussines/zapata-excentrica-viga-amarre/servicio/servicio.js');
 
 // Obtener controladores del contenedor DI
 const authController = container.get('authController');
@@ -131,6 +132,7 @@ router.post('/delete-request', authMiddleware, deleteRequest);
 // ============================================
 router.post('/zapata-combinada', authMiddleware, zapataCombinadaService);
 router.post('/zapata-cuadrada-aislada', authMiddleware, zapataCuadradaCombinadaService);
+router.post('/zapata-combinada-amarre', authMiddleware, zapata_excentrica_viga_amarre_servicio);
 
 // ============================================
 // MIDDLEWARE DE AUTENTICACIÓN PARA RUTAS DE MÓDULOS

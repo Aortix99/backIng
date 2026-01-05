@@ -39,40 +39,36 @@ const authMiddleware = (req, res, next) => {
     const authHeader = req.header('Authorization');
     const token = tokenService.extractTokenFromHeader(authHeader);
     
-    if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: 'Token de acceso requerido',
-        code: 'TOKEN_REQUIRED'
-      });
-    }
+    // TEMPORAL: Comentado para testing en Postman
+    // if (!token) {
+    //   return res.status(401).json({
+    //     success: false,
+    //     message: 'Token de acceso requerido',
+    //     code: 'TOKEN_REQUIRED'
+    //   });
+    // }
 
-    // Verificar token
-    const decoded = tokenService.verifyToken(token);
-    
-    // Agregar información del usuario al request
-    req.user = decoded;
-    req.token = token;
+    // Verificar token solo si existe
+    if (token) {
+      try {
+        const decoded = tokenService.verifyToken(token);
+        req.user = decoded;
+        req.token = token;
+      } catch (error) {
+        return res.status(401).json({
+          success: false,
+          message: 'Token inválido',
+          code: 'TOKEN_INVALID'
+        });
+      }
+    } else {
+      // Sin token, continuar sin autenticación para Postman
+      req.user = null;
+      req.token = null;
+    }
     
     next();
   } catch (error) {
-    // Manejo específico de errores de token
-    if (error.code === 'TOKEN_EXPIRED') {
-      return res.status(401).json({
-        success: false,
-        message: 'Token expirado',
-        code: 'TOKEN_EXPIRED'
-      });
-    }
-    
-    if (error.code === 'TOKEN_INVALID') {
-      return res.status(401).json({
-        success: false,
-        message: 'Token inválido',
-        code: 'TOKEN_INVALID'
-      });
-    }
-
     // Error genérico
     return res.status(401).json({
       success: false,

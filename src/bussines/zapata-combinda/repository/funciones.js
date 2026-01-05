@@ -107,12 +107,13 @@ const calculoAceroDoble = (Fc, Fy, B, Hz, Mu) => {
     const P2 = Mu[0] + Mu[1];
     const P3 = Mu[0] + Mu[1] + Mu[2];
     const P4 = Mu[0] + Mu[1] + Mu[2] + Mu[3];
-    const newAarray = [P1, P2, P3, P4];
+    const P5 = Mu[0] + Mu[1] + Mu[2] + Mu[3] + Mu[4];
+    const newAarray = [P1, P2, P3, P4, P5];
     const MuAbsEXp = newAarray;
     const MuAbs = newAarray.map((m) => Math.abs(m));
     let response = [];
     for (let i = 0; i < MuAbs.length; i++) {
-        const d = Hz - 0.09;
+        const d = Hz - 9;
         const A = ((Fc * 0.098) / (2 * 0.59 * (Fy * 0.098))) ** 2;
         const Ab = ((MuAbs[i] * 0.0098) * (Fc * 0.098)) / ((B) * (d) ** 2 * phi2 * estable * (Fy * 0.098) ** 2);
         const raiz = Math.abs(A - Ab);
