@@ -18,19 +18,9 @@ const zapataCuadradaCombinadaService = (req, res) => {
     Wc = parseFloat(Wc);
     Qa = parseFloat(Qa);
     Rc = parseFloat(Rc);
+    Az = parseInt(Az);
 
-    console.log('====>', Fc,
-        Fy,
-        Pd,
-        Pl,
-        Cx,
-        Cy,
-        Hz,
-        Ds,
-        Ws,
-        Wc,
-        Qa,
-        Rc);
+    console.log('====>', Az);
     const Qe = forceApplay(Qa, Hz, Wc, Ds, Ws);
     const Pu = forceApplicaExt(Pd, Pl);
 
