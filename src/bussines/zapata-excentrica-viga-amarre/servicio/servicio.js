@@ -255,7 +255,6 @@ const zapata_excentrica_viga_amarre_servicio = (req, res) => {
         });
     }
     const AsExtLarga = As(PExt.P[0], (LfinalExt.resultado * 100), Hz - 9, zapataExtLarga, BfinalExt.resultado * 100);
-    console.log('quien es Lfinal', LfinalExt.resultado);
     const AsExtCorta = As(0.0033, ((BfinalExt.resultado * 100)), Hv, zapataExtCorta, LfinalExt.resultado * 100);
     const AsParrillaDobleExterna = As(0.0018, ((LfinalExt.resultado * 100)), Hv, {area: 1.29, Nomen: 1/2}, LfinalExt.resultado * 100);
     if (AsExtLarga.Arroba2 <= 9 || AsExtLarga.Arroba2 > 35) {
@@ -276,7 +275,7 @@ const zapata_excentrica_viga_amarre_servicio = (req, res) => {
     if (AsViga.Arroba2 < 4.5) {
         return res.status(200).json({
             error: true,
-            message: `Error: No cumple espaciamiento minimo de separacion entre barras. es de: ${AsViga.Arroba2.toFixed(2)} Cm.`,
+            message: `Error: No cumple espaciamiento minimo de separacion entre barras de la viga. es de: ${AsViga.Arroba2.toFixed(2)} Cm.`,
         });
     }
     res.status(200).json({

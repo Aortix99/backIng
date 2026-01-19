@@ -1,8 +1,8 @@
 const { pulgadasMetro, listaAreaAcero } = require("../../constantes");
 const { forceApplay, redondearA05, forceApplicaExt, checkPedestal } = require("../../zapata-combinda/repository/funciones");
-const { areaRequiredCuadrada, areaPorFalla, checkD, validate13_4, validate13_3, validate_4, Vuz, quiuMiuCuadrada, cortanteDireccion, calculoAcero, calculoAceroAs, validate12_3, validate12_4 } = require("../../zapata-cuadrada-aislada/repository/calculate");
+const { areaRequiredCuadrada, areaPorFalla, checkD, validate_4, Vuz, quiuMiuCuadrada, cortanteDireccion, calculoAcero, calculoAceroAs, validate12_3, validate12_4 } = require("../repository/calculate");
 
-const zapataCuadradaCombinadaService = (req, res) => {
+const zapataEsquineraService = (req, res) => {
     let { Fc, Fy, Pd, Pl, Cx, Cy, Hz, Ds, Ws, Wc, Qa, Rc, Az } = req.body;
 
     // Convertir strings a números con decimales manteniendo el mismo nombre
@@ -19,18 +19,6 @@ const zapataCuadradaCombinadaService = (req, res) => {
     Qa = parseFloat(Qa);
     Rc = parseFloat(Rc);
 
-    console.log('====>', Fc,
-        Fy,
-        Pd,
-        Pl,
-        Cx,
-        Cy,
-        Hz,
-        Ds,
-        Ws,
-        Wc,
-        Qa,
-        Rc);
     const Qe = forceApplay(Qa, Hz, Wc, Ds, Ws);
     const Pu = forceApplicaExt(Pd, Pl);
 
@@ -119,6 +107,15 @@ const zapataCuadradaCombinadaService = (req, res) => {
             message: `Error: No cumple con los requisistos de espacio entre barras. El espacio entre barras debe estar entre 10 y 30 cm. separación entre barras es de: ${espacioEntreBarrasValidate.toFixed(2)} Cm.`,
         });
     }
+    let acerPorFraguado = '';
+    if (Hz >= 0.4) {
+        const aceroFraguado = 0.0018 * (B * 100) * (Hz - 0.09) * 100;
+        const cantidadBarras = Math.ceil(aceroFraguado / 1.29);
+        const distanciaEfectiva = L - (0.075) * 2;
+        const numeroDeAcero = (distanciaEfectiva * 100) / (cantidadBarras - 1)
+        console.log('quien da esto', distanciaEfectiva, numeroDeAcero, cantidadBarras);
+        acerPorFraguado = `Acero por fraguado = ${cantidadBarras}Φ#1/2 @ ${numeroDeAcero.toFixed(2)}`
+    }
 
     return res.status(200).json({
         error: false,
@@ -151,12 +148,13 @@ const zapataCuadradaCombinadaService = (req, res) => {
             validate4,
             Vu1: Vu1.toFixed(2),
             Vu2: Vu2.toFixed(2),
-            isEsquinera: false
+            isEsquinera: true,
+            acerPorFraguado
         },
         message: 'Zapata diseñada con exito...',
     });
 }
 
 module.exports = {
-    zapataCuadradaCombinadaService
+    zapataEsquineraService
 }
