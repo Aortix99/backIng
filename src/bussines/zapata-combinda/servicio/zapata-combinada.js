@@ -89,7 +89,7 @@ const zapataCombinadaService = (req, res) => {
         const B1 = (CyExt / 2 + ((PdInt + PlInt) * Lz) / (PdExt + PlExt + PdInt + PlInt));
         Bo = redondearA5(B1);
         // acero principal superior
-        const Bo1 = (((C * 1000) - (W * 10) * (20 + (Hz * 100 - 0.09 * 100))) / (0.53 * 0.75 * Math.sqrt(Fc) * (Hz * 100 - 0.09 * 100)))/100;
+        const Bo1 = (((C * 1000) - (W * 10) * (20 + (Hz * 100))) / (0.53 * 0.75 * Math.sqrt(Fc) * (Hz * 100)))/100;
         const Vu1 = peralteRequeridoEnUnaDireccion(C, W, Hz);
         const Validate1 = validate_4_1(Vu1, Fc, Bo, Hz);
         if (!Validate1.validate) {
@@ -175,7 +175,7 @@ const calculateAcero = (response, Bo, Hz, listaAreaAcero, L) => {
     let As = [];
     let separacionA = [];
     for (let i = 0; i < response.P.length; i++) {
-        const pValue = response.P[i] * Bo * 100 * (Hz * 100 - 0.09 * 100) ;
+        const pValue = response.P[i] * Bo * 100 * (Hz * 100) ;
         As.push(`P${i + 1}`, pValue);
         for (let j = 0; j <= listaAreaAcero.length; j++) {
             const area = listaAreaAcero[j].area;

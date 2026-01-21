@@ -28,32 +28,32 @@ const checkD = (Vu2, Fc, Bo) => {
 const validate12_3 = (Vu2, Bc, Fc, Bo, Hz) => {
     let validate = false;
     const d = (Vu2 * newtons) / (phi * (2 + (4 / Bc)) * 1 * Math.sqrt(Fc) * (Bo * pulgadas));
-    validate = d * pulgadasMetro < Hz - 0.09;
-    return { d: (d * pulgadasMetro).toFixed(2), Hz: (Hz - 0.09).toFixed(2), validate };
+    validate = d * pulgadasMetro < Hz;
+    return { d: (d * pulgadasMetro).toFixed(2), Hz: Hz.toFixed(2), validate };
 };
 
 const validate12_4 = (Vu2, Fc, Bo, Hz) => {
     let validate = false;
-    const Hz_9 = (Hz - 0.09) * pulgadas;
+    const Hz_9 = Hz * pulgadas;
     const d = (Vu2 * newtons) / (phi * (((40 * Hz_9) / (Bo * pulgadas)) + 2) * 1 * Math.sqrt(Fc) * (Bo * pulgadas));
-    validate = d * pulgadasMetro < Hz - 0.09;
-    return { d: (d * pulgadasMetro).toFixed(2), Hz: (Hz - 0.09).toFixed(2), validate };
+    validate = d * pulgadasMetro < Hz;
+    return { d: (d * pulgadasMetro).toFixed(2), Hz: Hz.toFixed(2), validate };
 };
 
 const cortanteDireccion = (B, C, Hz) => {
-    const e = (B / 2) - (C / 2) - (Hz - 0.09);
+    const e = (B / 2) - (C / 2) - Hz;
     return e;
 };
 
 const validate_4 = (Vu1, Fc, L, Hz) => {
     let validate = false;
     const d = (Vu1 * newtons) / (phi * 2 * Math.sqrt(Fc) * L * pulgadas);
-    validate = d * pulgadasMetro < Hz - 0.09;
-    return { d: (d * pulgadasMetro).toFixed(2), Hz: (Hz - 0.09).toFixed(2), validate };
+    validate = d * pulgadasMetro < Hz;
+    return { d: (d * pulgadasMetro).toFixed(2), Hz: Hz.toFixed(2), validate };
 };
 const calculoAcero = (Fc, Fy, B, Hz, e, L, Qu, MuV = 0, validate = false) => {
     let Mu = 0;
-    const d = Hz - 0.09;
+    const d = Hz;
     if (validate) {
         Mu = MuV;
     } else {

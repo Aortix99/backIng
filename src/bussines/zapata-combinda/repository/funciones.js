@@ -97,7 +97,7 @@ const FuerzaPuMax = (Fc, Cx, Cy) => {
 }
 
 const Vultimo = (Cu, W, Hz, Fc) => {
-    const d = Hz - 0.09;
+    const d = Hz;
     const Vu = ((Cu * 1000) - (W * 10) * (20 + (d * 100))) / (0.53 * 0.75 * Math.sqrt(Fc) * (d * 100));
     return Vu;
 };
@@ -113,7 +113,7 @@ const calculoAceroDoble = (Fc, Fy, B, Hz, Mu) => {
     const MuAbs = newAarray.map((m) => Math.abs(m));
     let response = [];
     for (let i = 0; i < MuAbs.length; i++) {
-        const d = Hz - 9;
+        const d = Hz;
         const A = ((Fc * 0.098) / (2 * 0.59 * (Fy * 0.098))) ** 2;
         const Ab = ((MuAbs[i] * 0.0098) * (Fc * 0.098)) / ((B) * (d) ** 2 * phi2 * estable * (Fy * 0.098) ** 2);
         const raiz = Math.abs(A - Ab);
@@ -126,7 +126,7 @@ const calculoAceroDoble = (Fc, Fy, B, Hz, Mu) => {
 };
 
 const peralteRequeridoEnUnaDireccion = (C, W, Hz) => {
-    const d = Hz - 0.09;
+    const d = Hz;
     const V = C - W * d;
     return V;
 }
@@ -134,26 +134,26 @@ const peralteRequeridoEnUnaDireccion = (C, W, Hz) => {
 const validate_4_1 = (Vu1, Fc, Bo, Hz) => {
     let validate = false;
     const d = (Vu1 * 2204.62) / (0.75 * 2 * Math.sqrt(Fc * 14.223) * (Bo * 39.37));
-    validate = d * pulgadasMetro < Hz - 0.09;
-    return { d: (d * pulgadasMetro).toFixed(2), Hz: (Hz - 0.09).toFixed(2), validate };
+    validate = d * pulgadasMetro < Hz;
+    return { d: (d * pulgadasMetro).toFixed(2), Hz: Hz.toFixed(2), validate };
 };
 
 const forceVu2 = (PuInt, CyInt, Hz, Qu) => {
-    const d = Hz - 0.09;
+    const d = Hz;
     const Vu2 = ((PuInt) - (CyInt + d) ** 2 * Qu);
     return Vu2;
 };
 const forceVu3 = (PuExt, CyExt, CxExt, Qu, Hz) => {
-    const d = Hz - 0.09;
+    const d = Hz;
     const Vu3 = ((PuExt) - ((CyExt + d) * (CxExt + d/2)) * Qu);
     return parseFloat((Vu3).toFixed(10));
 };
 const validate_4_2 = (Vu2, Fc, CyInt, Hz, Va, CxExt) => {
     let validate = false;
-    let variable = Va ? (4 * (CyInt * 39.37 + (Hz - 0.09) * 39.37)) : (((CyInt + (Hz - 0.09)) * (CxExt + (Hz - 0.09)/2)) * 39.37) * 2;
+    let variable = Va ? (4 * (CyInt * 39.37 + Hz * 39.37)) : (((CyInt + Hz) * (CxExt + Hz/2)) * 39.37) * 2;
     const d = (Vu2 * 2204.62) / (0.75 * 4 * Math.sqrt(Fc * 14.223) * variable);
-    validate = d * pulgadasMetro < Hz - 0.09;
-    return { d: (d * pulgadasMetro).toFixed(6), Hz: (Hz - 0.09).toFixed(2), validate };
+    validate = d * pulgadasMetro < Hz;
+    return { d: (d * pulgadasMetro).toFixed(6), Hz: Hz.toFixed(2), validate };
 }
 module.exports = {
     forceApplay,

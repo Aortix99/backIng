@@ -107,7 +107,7 @@ const zapata_excentrica_viga_amarre_servicio = (req, res) => {
     const momentEjeY = ejeYMomento(arrayDataEjeY, (CxExt / 100), L2, L3, L4, L5, L6);
     // REVISION DE ESPESOR ASUMIDO
     const QultimoInt = { formula: `${PuInt} Ton / (${LfinalInt.resultado} m * ${BfinalInt.resultado} m)`, resultado: PuInt / (LfinalInt.resultado * BfinalInt.resultado) };
-    const d = Hz - 9;
+    const d = Hz;
     const b0 = 2 * (CxInt + d) + 2 * (CyInt + d);
     const Vu = PuInt - QultimoInt.resultado * ((CxInt / 100) + (d / 100)) * ((CyInt / 100) + (d / 100));
     // en la interna siempre sera 1 ya que es cuadrada
@@ -207,7 +207,7 @@ const zapata_excentrica_viga_amarre_servicio = (req, res) => {
     }
 
     // Acero Armadura sobre la Vg externa.
-    let response1 = calculoAceroDobleInterno(Fc, Fy, Av, (Hz / 100), momentEjeY, (Av / 100), ((Hv / 100) - 0.09));
+    let response1 = calculoAceroDobleInterno(Fc, Fy, Av, (Hz / 100), momentEjeY, (Av / 100), (Hv / 100));
     // const response5 = calculateAcero(response1, Av, (Hz / 100), listaAreaAcero, Hv);
     // const graficaMomento = { y: [0, ...response1.MuAbsEXp], x: [0, E, Xa, Lz, L] };
 
@@ -243,18 +243,18 @@ const zapata_excentrica_viga_amarre_servicio = (req, res) => {
     const MuExt = Mu(QsueloUltimo.resultado, LfinalExt.resultado, BfinalExt.resultado, CyExt);
 
     // sacamos la P o sea cuantia de cada Mu usando la funcion de acero
-    const PInt = calculoAceroDobleInternoMoment(Fc, Fy, 0, Hz, MuInt.resultado, LfinalInt.resultado, ((Hz - 9) / 100));
-    const PExt = calculoAceroDobleInternoMoment(Fc, Fy, 0, Hz, MuExt.resultado, LfinalExt.resultado, ((Hz - 9) / 100));
+    const PInt = calculoAceroDobleInternoMoment(Fc, Fy, 0, Hz, MuInt.resultado, LfinalInt.resultado, (Hz / 100));
+    const PExt = calculoAceroDobleInternoMoment(Fc, Fy, 0, Hz, MuExt.resultado, LfinalExt.resultado, (Hz / 100));
 
-    const AsInt = As(PInt.P[0], (BfinalInt.resultado * 100), Hz - 9, zapataInt, null);
-    const AsParrillaDobleInterna = As(0.0018, (BfinalInt.resultado * 100), Hz - 9, {area: 1.29, Nomen: 1/2}, null);
+    const AsInt = As(PInt.P[0], (BfinalInt.resultado * 100), Hz, zapataInt, null);
+    const AsParrillaDobleInterna = As(0.0018, (BfinalInt.resultado * 100), Hz, {area: 1.29, Nomen: 1/2}, null);
     if (AsInt.Arroba2 < 10 || AsInt.Arroba2 > 35) {
         return res.status(200).json({
             error: true,
             message: `Error: No cumple con los requisistos de espacio entre barras Internas. El espacio entre barras debe estar entre 10 y 35 cm. separación entre barras es de: ${AsInt.Arroba2.toFixed(2)} Cm.`,
         });
     }
-    const AsExtLarga = As(PExt.P[0], (LfinalExt.resultado * 100), Hz - 9, zapataExtLarga, BfinalExt.resultado * 100);
+    const AsExtLarga = As(PExt.P[0], (LfinalExt.resultado * 100), Hz, zapataExtLarga, BfinalExt.resultado * 100);
     const AsExtCorta = As(0.0033, ((BfinalExt.resultado * 100)), Hv, zapataExtCorta, LfinalExt.resultado * 100);
     const AsParrillaDobleExterna = As(0.0018, ((LfinalExt.resultado * 100)), Hv, {area: 1.29, Nomen: 1/2}, LfinalExt.resultado * 100);
     if (AsExtLarga.Arroba2 <= 9 || AsExtLarga.Arroba2 > 35) {
@@ -368,7 +368,7 @@ const calculateAcero = (response, Bo, Hz, listaAreaAcero, L) => {
     let separacionA = [];
 
     for (let i = 0; i < response.P.length; i++) {
-        const pValue = response.P[i] * Bo * 100 * (Hz * 100 - 0.09 * 100);
+        const pValue = response.P[i] * Bo * 100 * (Hz * 100);
         As.push(`P${i + 1}`, pValue);
 
         // Buscar en la lista de aceros (cambiar <= por <)
@@ -406,7 +406,7 @@ const calculoAceroDobleInterno = (Fc, Fy, B, Hz, Mu, Lz, Hv) => {
     const response = [];
 
     for (let i = 0; i < MuAbs.length; i++) {
-        const d = roundTo5(Hz - 0.09);
+        const d = roundTo5(Hz);
         const A = roundTo5((((Fc * 0.098) / (2 * 0.59 * (Fy * 0.098))) ** 2));
         // lz Lfinal Interna y Hv sera d que hay que exponerlo en metros
         const Ab = roundTo5((((MuAbs[i] * 0.0098) * (Fc * 0.098)) / (Lz * Hv ** 2 * 0.9 * 0.59 * ((Fy * 0.098) ** 2))));
@@ -433,7 +433,7 @@ const calculoAceroDobleInternoMoment = (Fc, Fy, B, Hz, Mu, Lz, Hv) => {
     const response = [];
 
     for (let i = 0; i < MuAbs.length; i++) {
-        const d = roundTo5(Hz - 0.09);
+        const d = roundTo5(Hz);
         const A = roundTo5((((Fc * 0.098) / (2 * 0.59 * (Fy * 0.098))) ** 2));
         // lz Lfinal Interna y Hv sera d que hay que exponerlo en metros
         const Ab = roundTo5((((MuAbs[i] * 0.0098) * (Fc * 0.098)) / (Lz * Hv ** 2 * 0.9 * 0.59 * ((Fy * 0.098) ** 2))));
