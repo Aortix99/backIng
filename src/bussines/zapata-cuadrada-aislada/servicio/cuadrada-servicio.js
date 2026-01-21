@@ -51,7 +51,7 @@ const zapataCuadradaCombinadaService = (req, res) => {
     const Vu2 = Vuz(A, Cx, De, Qu);
 
     const D = checkD(Vu2, Fc, Bo) * pulgadasMetro;
-    const d = Hz;
+    const d = Hz - 0.09;
 
     const validate1 = D < d;
     if (!validate1) {
@@ -96,7 +96,7 @@ const zapataCuadradaCombinadaService = (req, res) => {
 
     let P = calculoAcero(Fc, Fy, B, Hz, e, L, Qu);
     if (P.As < 0.0033) P.As = 0.0033;
-    const As = calculoAceroAs(P.As, L, Hz);
+    const As = calculoAceroAs(P.As, L, Hz - 0.09);
     const aceroCalculado = As / listaAreaAcero.find(item => item.Az === Az).area;
     cantidadAcero = Math.ceil(aceroCalculado);
 
