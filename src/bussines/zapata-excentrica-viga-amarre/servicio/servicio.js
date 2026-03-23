@@ -25,7 +25,7 @@ const {
   As,
   AsVigaFn,
 } = require("../repositorio/funciones");
-const { estable, listaAreaAcero } = require("../../constantes");
+const { estable } = require("../../constantes");
 
 const zapata_excentrica_viga_amarre_servicio = (req, res) => {
   // Av ancho de viga
@@ -174,7 +174,6 @@ const zapata_excentrica_viga_amarre_servicio = (req, res) => {
       (sumatoriaP1.resultado + Ar.resultado) /
       (BfinalExt.resultado * LfinalExt.resultado),
   };
-  console.log("Ns", Ns);
   // Ajuste de dimensiones hasta que Qa > Ns (+0.5 m = +50 cm por paso)
     while (Ns.resultado > Qa) {
       LfinalExt.resultado = redondearMedio(LfinalExt.resultado + 0.5);
@@ -198,8 +197,6 @@ const zapata_excentrica_viga_amarre_servicio = (req, res) => {
     CxExt / 100,
     PuExt,
   );
-
-  const Ltotal = CxExt / 100 / 2 + Lz + LfinalInt.resultado / 2;
 
   // Array de posiciones en eje X - ordenado y documentado
   const arrayDataEjeX = [
@@ -436,27 +433,12 @@ const zapata_excentrica_viga_amarre_servicio = (req, res) => {
       d *
       (1 / 1000),
   };
-  console.log('quein es l', LfinalExt, d);
-  console.log('errros', Vc2_Ext.resultado, Vu2_Ext.resultado);
-  // if (Vc2_Ext.resultado < Vu2_Ext.resultado) {
-  //   return res.status(200).json({
-  //     error: true,
-  //     message: "Error de CORTANTE Externa",
-  //   });
-  // }
 
   // chequeo de viga.
   const b_Ext = {
     formlua: "(P3*1000)/0.53 * Φ * √(Fc) * d",
     resultado: (arrayDataEjeY[2] * 1000) / (0.53 * 0.75 * Math.sqrt(Fc) * d),
   };
-  //   if (b_Ext.resultado > Av) {
-  //     return res.status(200).json({
-  //       error: true,
-  //       message:
-  //         "Error de corte en viga amarre, b es mayor que el ancho de viga (Av)" + b_Ext.resultado + '///' + Av,
-  //     });
-  //   }
 
   // Acero Armadura sobre la Vg externa.
   let response1 = calculoAceroDobleInterno(
@@ -514,6 +496,7 @@ const zapata_excentrica_viga_amarre_servicio = (req, res) => {
   const SMax = { formula: "mín(s por cortante, s máximo norma)", resultado: Math.min(szcCm, szncCm) };
   const Hierro = `E ${Nbarras.item} @ ${SMax.resultado} cm`;
   const Vc_acero = { formula: "Φ · Vc (contribución del concreto)", resultado: redondear(delta_Vc.resultado) };
+
   // acero de zapata interior
   const MuInt = Mu(
     QsueloUltimo.resultado,
@@ -607,7 +590,7 @@ const zapata_excentrica_viga_amarre_servicio = (req, res) => {
   if (AsViga.Arroba2 < 4) {
     return res.status(200).json({
       error: true,
-      message: `Error: No cumple espaciamiento minimo de separacion entre barras de la viga. es de: ${AsViga.Arroba2.toFixed(3)} Cm. cantidades de barras ${AsViga.acero}`,
+      message: `Error: No cumple espaciamiento minimo de separacion entre barras de la viga. es de: ${AsViga.Arroba2.toFixed(3)} Cm.`,
     });
   }
   res.status(200).json({

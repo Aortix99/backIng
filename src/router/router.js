@@ -23,6 +23,8 @@ const { zapataCombinadaService } = require('../bussines/zapata-combinda/servicio
 const { zapataCuadradaCombinadaService } = require('../bussines/zapata-cuadrada-aislada/servicio/cuadrada-servicio.js');
 const { zapataEsquineraService } = require('../bussines/zapata-esquinera/servicio/esquinera-servicio.js');
 const { zapata_excentrica_viga_amarre_servicio } = require('../bussines/zapata-excentrica-viga-amarre/servicio/servicio.js');
+const { Viga_de_amarre_zapata_aislada } = require('../bussines/viga-de-tensor/servicio/servicio.js');
+const { listarMunicipiosSismicos } = require('../bussines/viga-de-tensor/repositorio/funciones.js');
 
 // Obtener controladores del contenedor DI
 const authController = container.get('authController');
@@ -135,6 +137,31 @@ router.post('/zapata-combinada', authMiddleware, zapataCombinadaService);
 router.post('/zapata-cuadrada-aislada', authMiddleware, zapataCuadradaCombinadaService);
 router.post('/zapata-esquinera', authMiddleware, zapataEsquineraService);
 router.post('/zapata-combinada-amarre', authMiddleware, zapata_excentrica_viga_amarre_servicio);
+router.post('/viga-tensor-zapata-aislada', authMiddleware, Viga_de_amarre_zapata_aislada);
+
+/**
+ * @route GET /api/municipios-sismicos
+ * @desc Lista municipios con código DANE para selects (NSR-10)
+ * @access Protected
+ */
+router.get('/municipios-sismicos', authMiddleware, (req, res) => {
+  try {
+    const rows = listarMunicipiosSismicos();
+    res.status(200).json({
+      municipios: rows.map((m) => ({
+        codMunicipio: m.codMunicipio,
+        municipio: m.municipio,
+        departamento: m.departamento,
+        aa: m.aa,
+      })),
+    });
+  } catch (err) {
+    res.status(500).json({
+      error: true,
+      message: 'No se pudo cargar el catálogo de municipios.',
+    });
+  }
+});
 
 // ============================================
 // MIDDLEWARE DE AUTENTICACIÓN PARA RUTAS DE MÓDULOS
