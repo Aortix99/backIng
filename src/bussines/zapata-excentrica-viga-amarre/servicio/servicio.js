@@ -216,7 +216,7 @@ const zapata_excentrica_viga_amarre_servicio = (req, res) => {
     formula: `${PuInt} Ton / (${LfinalInt.resultado} m * ${BfinalInt.resultado} m)`,
     resultado: PuInt / (LfinalInt.resultado * BfinalInt.resultado),
   };
-  const d = Hz;
+  const d = Hz - 7.5;
   const b0 = 2 * (CxInt + d) + 2 * (CyInt + d);
   const Vu =
     PuInt -

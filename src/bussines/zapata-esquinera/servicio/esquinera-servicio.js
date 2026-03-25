@@ -44,12 +44,12 @@ const zapataEsquineraService = (req, res) => {
 
     const Qu = quiuMiuCuadrada(Pd, Pl, A);
 
-    const De = Hz;
+    const De = Hz - (Rc/100);
     const Bo = areaPorFalla(Cx, De);
     const Vu2 = Vuz(A, Cx, De, Qu);
 
     const D = checkD(Vu2, Fc, Bo) * pulgadasMetro;
-    const d = Hz - 0.09;
+    const d = Hz - (Rc/100);
 
     const validate1 = D < d;
     if (!validate1) {

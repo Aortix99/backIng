@@ -76,9 +76,9 @@ const cargaUltima = {
 
 const ag = {
   formula: "b * h",
-  reemplazo: "${b} * ${h}",
-  resultado: b * h
-}
+  reemplazo: `${b} * ${h}`,
+  resultado: b * h,
+};
 
 const RHO_INICIAL = 0.0033;
 const RHO_DELTA = 0.0001;
@@ -174,6 +174,17 @@ for (let paso = 0; paso < RHO_MAX_PASOS; paso++) {
   rho = Math.round((rho + RHO_DELTA) * 10000) / 10000;
 }
 
+  const hVal = Number(h);
+  const sEst1 = hVal / 2;
+  const sEst2 = 0.3;
+  const separacionEstribosM = Math.min(sEst1, sEst2);
+  const paso12 = {
+    formula:
+      "NSR-10 C.15.13.4 — separación de estribos (Se ≤ h/2; se compara con 0,30 m)",
+    reemplazo: `S₁ = h/2 = ${hVal} / 2 = ${redondear(sEst1)} m; S₂ = 0,30 m; se adopta min(S₁, S₂)`,
+    resultado: separacionEstribosM.toFixed(2),
+  };
+
 
   return res.status(200).json({
     error: false,
@@ -200,6 +211,7 @@ for (let paso = 0; paso < RHO_MAX_PASOS; paso++) {
     PhiPnMaxima,
     PhiPn,
     PhiTu,
+    paso12,
   });
 };
 

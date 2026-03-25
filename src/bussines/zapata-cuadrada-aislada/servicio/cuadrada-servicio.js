@@ -1,6 +1,6 @@
 const { pulgadasMetro, listaAreaAcero } = require("../../constantes");
 const { forceApplay, redondearA05, forceApplicaExt, checkPedestal } = require("../../zapata-combinda/repository/funciones");
-const { areaRequiredCuadrada, areaPorFalla, checkD, validate13_4, validate13_3, validate_4, Vuz, quiuMiuCuadrada, cortanteDireccion, calculoAcero, calculoAceroAs, validate12_3, validate12_4 } = require("../../zapata-cuadrada-aislada/repository/calculate");
+const { areaRequiredCuadrada, areaPorFalla, checkD, validate_4, Vuz, quiuMiuCuadrada, cortanteDireccion, calculoAcero, calculoAceroAs, validate12_3, validate12_4 } = require("../../zapata-cuadrada-aislada/repository/calculate");
 
 const zapataCuadradaCombinadaService = (req, res) => {
     let { Fc, Fy, Pd, Pl, Cx, Cy, Hz, Ds, Ws, Wc, Qa, Rc, Az } = req.body;
@@ -20,7 +20,6 @@ const zapataCuadradaCombinadaService = (req, res) => {
     Rc = parseFloat(Rc);
     Az = parseInt(Az);
 
-    console.log('====>', Az);
     const Qe = forceApplay(Qa, Hz, Wc, Ds, Ws);
     const Pu = forceApplicaExt(Pd, Pl);
 
@@ -46,12 +45,12 @@ const zapataCuadradaCombinadaService = (req, res) => {
 
     const Qu = quiuMiuCuadrada(Pd, Pl, A);
 
-    const De = Hz;
+    const De = Hz - (Rc/100);
     const Bo = areaPorFalla(Cx, De);
     const Vu2 = Vuz(A, Cx, De, Qu);
 
     const D = checkD(Vu2, Fc, Bo) * pulgadasMetro;
-    const d = Hz - 0.09;
+    const d = Hz - (Rc/100);
 
     const validate1 = D < d;
     if (!validate1) {
