@@ -583,16 +583,9 @@ const zapata_excentrica_viga_amarre_servicio = (req, res) => {
       message: `Error: No cumple con los requisistos de espacio entre barras Externas corta. El espacio entre barras debe ser mayor a 9 cm . separación entre barras es de: ${AsExtCorta.Arroba2.toFixed(2)} Cm.`,
     });
   }
-  console.log('asdasdas', response1);
   const PMaxVig = Math.abs(response1.P[0]);
   const AsViga = AsVigaFn(PMaxVig, Hv, Av, vgNroBarra, Av);
-  console.log('quien es el acero', PMaxVig, Hv, Av, vgNroBarra, Av, AsViga);
-  if (AsViga.Arroba2 < 4) {
-    return res.status(200).json({
-      error: true,
-      message: `Error: No cumple espaciamiento minimo de separacion entre barras de la viga. es de: ${AsViga.Arroba2.toFixed(3)} Cm.`,
-    });
-  }
+
   res.status(200).json({
     presionInt,
     presionExt,
