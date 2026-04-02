@@ -78,6 +78,12 @@ class AuthValidator {
       result.errors.push(...passwordValidation.errors);
     }
 
+    const phoneValidation = this._validatePhone(data.phone);
+    if (!phoneValidation.isValid) {
+      result.isValid = false;
+      result.errors.push(...phoneValidation.errors);
+    }
+
     // Validar confirmación de contraseña si existe
     if (data.confirmPassword !== undefined) {
       const confirmPasswordValidation = this._validatePasswordConfirmation(data.password, data.confirmPassword);
@@ -85,6 +91,44 @@ class AuthValidator {
         result.isValid = false;
         result.errors.push(...confirmPasswordValidation.errors);
       }
+    }
+
+    return result;
+  }
+
+  /**
+   * Celular CO: exactamente 10 dígitos, primer dígito 3
+   * @private
+   */
+  _validatePhone(phone) {
+    const result = {
+      isValid: true,
+      errors: [],
+    };
+
+    if (phone === undefined || phone === null || phone === '') {
+      result.isValid = false;
+      result.errors.push('El celular es requerido');
+      return result;
+    }
+
+    if (typeof phone !== 'string') {
+      result.isValid = false;
+      result.errors.push('El celular debe ser texto');
+      return result;
+    }
+
+    const digits = phone.replace(/\D/g, '');
+    if (digits.length !== 10) {
+      result.isValid = false;
+      result.errors.push('El celular debe tener exactamente 10 dígitos');
+      return result;
+    }
+
+    if (!/^3\d{9}$/.test(digits)) {
+      result.isValid = false;
+      result.errors.push('El celular debe comenzar con 3');
+      return result;
     }
 
     return result;
@@ -173,15 +217,23 @@ class AuthValidator {
       }
 
       if (!/[A-Z]/.test(password)) {
+        result.isValid = false;
         result.errors.push('La contraseña debe contener al menos una letra mayúscula');
       }
 
       if (!/[a-z]/.test(password)) {
+        result.isValid = false;
         result.errors.push('La contraseña debe contener al menos una letra minúscula');
       }
 
       if (!/\d/.test(password)) {
+        result.isValid = false;
         result.errors.push('La contraseña debe contener al menos un número');
+      }
+
+      if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(password)) {
+        result.isValid = false;
+        result.errors.push('La contraseña debe contener al menos un carácter especial');
       }
 
       // Contraseñas comunes
@@ -297,6 +349,10 @@ class AuthValidator {
 
     if (data.confirmPassword) {
       sanitized.confirmPassword = data.confirmPassword;
+    }
+
+    if (data.phone != null && data.phone !== '') {
+      sanitized.phone = String(data.phone).replace(/\D/g, '');
     }
 
     return sanitized;

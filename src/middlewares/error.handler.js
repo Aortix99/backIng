@@ -86,6 +86,13 @@ const notFoundHandler = (req, res, next) => {
 const errorHandler = (error, req, res, next) => {
   let { statusCode, message, code } = error;
 
+  if (typeof error.statusCode === 'number') {
+    statusCode = error.statusCode;
+  }
+  if (!message && error.message) {
+    message = error.message;
+  }
+
   // Log del error para debugging
   console.error('Error captured:', {
     message: error.message,
@@ -159,8 +166,9 @@ const errorHandler = (error, req, res, next) => {
     message = 'Token expirado';
   }
 
-  // Si no es un error operacional, convertir a error genérico
-  if (!error.isOperational) {
+  // Si no es un error operacional y no trae status explícito, convertir a error genérico
+  const hasExplicitStatus = typeof error.statusCode === 'number';
+  if (!error.isOperational && !hasExplicitStatus) {
     statusCode = 500;
     code = 'INTERNAL_ERROR';
     message = process.env.NODE_ENV === 'production' 

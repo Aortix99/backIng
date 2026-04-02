@@ -53,8 +53,8 @@ class AuthController {
    */
   async register(req, res, next) {
     try {
-      // Validar datos de entrada
-      const validationResult = this.validator.validateRegister(req.body);
+      const payload = { ...req.body, ...this.validator.sanitizeInput(req.body) };
+      const validationResult = this.validator.validateRegister(payload);
       if (!validationResult.isValid) {
         return res.status(400).json({
           success: false,
@@ -63,8 +63,7 @@ class AuthController {
         });
       }
 
-      // Ejecutar servicio de registro
-      const result = await this.authService.register(req.body);
+      const result = await this.authService.register(payload);
       
       return res.status(201).json({
         success: true,

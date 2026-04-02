@@ -17,7 +17,7 @@ class UserRepository {
     try {
       return await User.findOne({ 
         where: { email },
-        attributes: ['id', 'email', 'name', 'password', 'createdAt', 'updatedAt']
+        attributes: ['id', 'email', 'name', 'password', 'role', 'phone', 'createdAt', 'updatedAt']
       });
     } catch (error) {
       throw error;
@@ -29,10 +29,24 @@ class UserRepository {
    * @param {number} id - ID del usuario
    * @returns {Promise<Object|null>} Usuario encontrado o null
    */
+  async findByPhone(phone) {
+    if (!phone) {
+      return null;
+    }
+    try {
+      return await User.findOne({
+        where: { phone },
+        attributes: ['id', 'email', 'name', 'phone', 'createdAt', 'updatedAt'],
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async findById(id) {
     try {
       return await User.findByPk(id, {
-        attributes: ['id', 'email', 'name', 'createdAt', 'updatedAt']
+        attributes: ['id', 'email', 'name', 'phone', 'createdAt', 'updatedAt']
       });
     } catch (error) {
       throw error;
@@ -100,7 +114,7 @@ class UserRepository {
   async findAll(offset = 0, limit = 10) {
     try {
       const { count, rows } = await User.findAndCountAll({
-        attributes: ['id', 'email', 'name', 'createdAt', 'updatedAt'],
+        attributes: ['id', 'email', 'name', 'phone', 'createdAt', 'updatedAt'],
         offset,
         limit,
         order: [['createdAt', 'DESC']]

@@ -30,6 +30,12 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: false,
       comment: 'Rol del usuario (false: Empleado, true: Admin)'
     },
+    phone: {
+      type: DataTypes.STRING(10),
+      allowNull: true,
+      unique: true,
+      comment: 'Celular: 10 dígitos, inicia con 3'
+    },
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,

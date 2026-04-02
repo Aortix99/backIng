@@ -1,44 +1,48 @@
 require('dotenv').config();
+const path = require('path');
+const { promisify } = require('util');
+const { exec } = require('child_process');
+
 const app = require('./app');
 const { sequelize } = require('./models');
-const { exec } = require('child_process');
 const { ensureDatabaseExists } = require('./utils/init-bd');
 
+const execAsync = promisify(exec);
 const PORT = process.env.PORT || 5000;
+const PROJECT_ROOT = path.join(__dirname, '..');
 
 (async () => {
   try {
-    // COMENTADO: No conectar a BD por el momento
-    // // 1. Crear la base de datos si no existe
-    // await ensureDatabaseExists();
+    try {
+      await ensureDatabaseExists();
+    } catch (e) {
+      console.warn(
+        '⚠️ ensureDatabaseExists omitido o falló (si la BD ya existe, puedes ignorar):',
+        e.message
+      );
+    }
 
-    // // 2. Conectar con Sequelize
-    // await sequelize.authenticate();
-    // console.log('✅ Conexión establecida con la base de datos');
+    await sequelize.authenticate();
+    console.log('✅ Conexión establecida con la base de datos');
 
-    // // 3. Ejecutar migraciones con sequelize-cli (esto sí deja rastro)
-    // exec('npx sequelize-cli db:migrate', (err, stdout, stderr) => {
-    //   if (err) {
-    //     console.error('❌ Error al ejecutar migraciones:', stderr);
-    //     process.exit(1);
-    //   }
+    try {
+      const { stdout, stderr } = await execAsync('npx sequelize-cli db:migrate', {
+        cwd: PROJECT_ROOT,
+        maxBuffer: 1024 * 1024,
+        shell: true,
+      });
+      if (stdout) console.log('🛠️ Migraciones:\n', stdout);
+      if (stderr) console.warn(stderr);
+    } catch (migrateErr) {
+      console.error('❌ Error al ejecutar migraciones:', migrateErr.stderr || migrateErr.message);
+      process.exit(1);
+    }
 
-    //   console.log('🛠️ Migraciones ejecutadas:\n', stdout);
-
-    //   // 4. Iniciar el servidor
-    //   app.listen(PORT, () => {
-    //     console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
-    //   });
-    // });
-
-    // Iniciar servidor sin conectar a BD
     app.listen(PORT, () => {
       console.log(`🚀 Servidor corriendo en http://localhost:${PORT}`);
-      console.log('⚠️ Base de datos desconectada (modo testing)');
-      //vacio
     });
-
   } catch (error) {
-    console.error('❌ Error al iniciar servidor:', error);
+    console.error('❌ Error al iniciar servidor:', error.message);
+    process.exit(1);
   }
 })();

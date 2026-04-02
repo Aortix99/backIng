@@ -7,6 +7,7 @@
     "coverage": "jest --detectOpenHandles --forceExit --coverage",
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
+    "db:migrate": "sequelize-cli db:migrate",
     "typeorm": "typeorm-ts-node-commonjs",
     "migration:generate": "typeorm-ts-node-commonjs migration:generate -d ./src/config/data-source.js",
     "migration:run": "typeorm-ts-node-commonjs migration:run -d ./src/config/data-source.js"

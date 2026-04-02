@@ -50,14 +50,20 @@ class AuthService {
       const user = await this.userRepository.findByEmail(email);
       
       if (!user) {
-        throw new Error('Credenciales incorrectas');
+        const err = new Error('Credenciales incorrectas');
+        err.statusCode = 401;
+        err.code = 'AUTHENTICATION_ERROR';
+        throw err;
       }
 
       // Verificar contraseña en BD
       const isPasswordValid = await this.passwordService.compare(password, user.password);
       
       if (!isPasswordValid) {
-        throw new Error('Credenciales incorrectas');
+        const err = new Error('Credenciales incorrectas');
+        err.statusCode = 401;
+        err.code = 'AUTHENTICATION_ERROR';
+        throw err;
       }
 
       // Generar token JWT
@@ -65,7 +71,8 @@ class AuthService {
         id: user.id,
         email: user.email,
         name: user.name,
-        role: user.role
+        role: user.role,
+        phone: user.phone,
       });
 
       // Retornar usuario sin contraseña y token
@@ -90,22 +97,32 @@ class AuthService {
   async register(userData) {
     try {
       const { name, email, password } = userData;
+      const phone = String(userData.phone ?? '').replace(/\D/g, '');
 
-      // Verificar si el usuario ya existe
       const existingUser = await this.userRepository.findByEmail(email);
       
       if (existingUser) {
-        throw new Error('El email ya está registrado');
+        const err = new Error('El email ya está registrado');
+        err.statusCode = 409;
+        err.code = 'CONFLICT_ERROR';
+        throw err;
       }
 
-      // Hashear contraseña
+      const existingPhone = await this.userRepository.findByPhone(phone);
+      if (existingPhone) {
+        const err = new Error('Este celular ya está registrado');
+        err.statusCode = 409;
+        err.code = 'CONFLICT_ERROR';
+        throw err;
+      }
+
       const hashedPassword = await this.passwordService.hash(password);
 
-      // Crear usuario
       const newUser = await this.userRepository.create({
         name,
         email,
-        password: hashedPassword
+        password: hashedPassword,
+        phone,
       });
 
       // Generar token JWT
@@ -113,7 +130,8 @@ class AuthService {
         id: newUser.id,
         email: newUser.email,
         name: newUser.name,
-        role: newUser.role
+        role: newUser.role,
+        phone: newUser.phone,
       });
 
       // Retornar usuario sin contraseña y token
